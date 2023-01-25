@@ -1,10 +1,12 @@
 import 'dart:math';
+import 'package:animated_side_bar_and_navigation_bar/bottom_navigation_components/rive_utiles.dart';
 import 'package:animated_side_bar_and_navigation_bar/constants.dart';
 import 'package:animated_side_bar_and_navigation_bar/list.dart';
 import 'package:animated_side_bar_and_navigation_bar/bottom_navigation_components/rive_asset.dart';
 import 'package:animated_side_bar_and_navigation_bar/side_bar_menu/menu_btn.dart';
 import 'package:animated_side_bar_and_navigation_bar/side_bar_menu/side_bar_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 import 'bottom_navigation_components/bottom_vertical_widget.dart';
 import 'home_screen.dart';
 
@@ -134,7 +136,62 @@ class _MyHomePageState extends State<MyHomePage>
               children: [
                 ...List.generate(
                   bottomNavs.length,
-                  (index) => BottomVerticalWidget(index: index),
+                  (index) => GestureDetector(
+                    onTap: () {
+                      bottomNavs[index].input!.change(true);
+                      if (bottomNavs[index] != selectedBottomNav) {
+                        setState(() {
+                          selectedBottomNav = bottomNavs[index];
+                        });
+                      }
+                      Future.delayed(
+                        const Duration(seconds: 1),
+                        () {
+                          bottomNavs[index].input!.change(false);
+                        },
+                      );
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          width:
+                              selectedBottomNav == bottomNavs[index] ? 20 : 0,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF81B4FF),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: Opacity(
+                            opacity: bottomNavs[index] == selectedBottomNav
+                                ? 1
+                                : 0.5,
+                            child: RiveAnimation.asset(
+                              bottomNavs.first.src,
+                              artboard: bottomNavs[index].artboard,
+                              onInit: (artboard) {
+                                StateMachineController controller =
+                                    RiveUtiles.getRiveController(
+                                  artboard,
+                                  stateMachineName:
+                                      bottomNavs[index].stateMachineName,
+                                );
+                                setState(() {
+                                  bottomNavs[index].input =
+                                      controller.findSMI("active") as SMIBool;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
