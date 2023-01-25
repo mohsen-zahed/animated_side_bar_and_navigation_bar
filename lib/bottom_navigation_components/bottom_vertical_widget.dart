@@ -10,6 +10,7 @@ class BottomVerticalWidget extends StatefulWidget {
     Key? key,
     required this.index,
   }) : super(key: key);
+
   final int index;
 
   @override
@@ -18,6 +19,7 @@ class BottomVerticalWidget extends StatefulWidget {
 
 class _BottomVerticalWidgetState extends State<BottomVerticalWidget> {
   RiveAsset selectedBottomNav = bottomNavs.first;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -59,10 +61,12 @@ class _BottomVerticalWidgetState extends State<BottomVerticalWidget> {
                   StateMachineController controller =
                       RiveUtiles.getRiveController(
                     artboard,
-                    StateMachineName: bottomNavs[widget.index].stateMachineName,
+                    stateMachineName: bottomNavs[widget.index].stateMachineName,
                   );
-                  bottomNavs[widget.index].input =
-                      controller.findSMI("active") as SMIBool;
+                  setState(() {
+                    bottomNavs[widget.index].input =
+                        controller.findSMI("active") as SMIBool;
+                  });
                 },
               ),
             ),
